@@ -1,0 +1,12 @@
+{
+  
+  "LIVE_OUTPUT_DIRECTORY": "D:\\APTLRPT\\images",
+  "LOG_DIRECTORY": "D:\\APTLRPT\\logs",
+  "TLE_FILE_PATH": "weather.txt",
+  "OBSERVER_LAT": 50.866077,
+  "OBSERVER_LON": 20.628569,
+  "OBSERVER_ELEVATION": 300,
+  "PROCESS_TYPE": "both",
+  "UPDATE_DAYS": 3,
+  "_comment": "process_type: dump, visualize, both"
+}

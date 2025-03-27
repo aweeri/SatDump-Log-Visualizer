@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Images for {{ folder_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .gallery { display: flex; flex-wrap: wrap; }
+        .gallery-item { width: 33%; padding: 5px; box-sizing: border-box; }
+        .gallery-item img { width: 100%; height: auto; }
+        h1, h2 { text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Images for {{ folder_name }}</h1>
+    {% for subfolder, images in subfolders.items() %}
+        <h2>{{ subfolder }}</h2>
+        <div class="gallery">
+            {% for image in images %}
+            <div class="gallery-item">
+                <a href="{{ image.path }}"><img src="{{ image.thumb_path }}" alt="{{ image.name }}"></a>
+            </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+</html>

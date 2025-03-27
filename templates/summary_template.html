@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satellite Passes Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f4f4f4; cursor: pointer; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Satellite Passes Summary</h1>
+    <table id="summaryTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Satellite<BR>Name</th>
+                <th onclick="sortTable(1)">Pass<BR>Start</th>
+                <th onclick="sortTable(2)">Pass<BR>End</th>
+                <th onclick="sortTable(3, 'num')">Max<BR>SNR</th>
+                <th onclick="sortTable(4, 'num')">Start<BR>Azimuth</th>
+                <th onclick="sortTable(5, 'num')">End<BR>Azimuth</th>
+                <th onclick="sortTable(6, 'num')">Max<BR>Elevation</th>
+                <th onclick="sortTable(7)">Decoder</th>
+                <th>SNR & Elevation</th>
+                <th>Satellite Route</th>
+                <th>Polar Plot</th>
+                <th>Inverted Polar Plot</th>
+                <th>Heatmap</th>
+                <th>Images</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pass in passes %}
+            <tr>
+                <td>{{ pass.satellite }}</td>
+                <td>{{ pass.pass_start }}</td>
+                <td>{{ pass.pass_end }}</td>
+                <td style="text-align:right">{{ pass.max_snr }}</td>
+                <td style="text-align:right">{{ pass.start_azimuth }}</td>
+                <td style="text-align:right">{{ pass.end_azimuth }}</td>
+                <td style="text-align:right">{{ pass.max_elevation }}</td>
+                <td>{{ pass.decoder }}</td>
+                <td>{% if pass.snr_elevation_link %}<a href="{{ pass.snr_elevation_link }}"><img src="{{ pass.snr_elevation_thumb }}" alt="SNR & Elevation"></a>{% else %}-{% endif %}</td>
+                <td>{% if pass.satellite_route_link %}<a href="{{ pass.satellite_route_link }}"><img src="{{ pass.satellite_route_thumb }}" alt="Satellite Route"></a>{% else %}-{% endif %}</td>
+                <td>{% if pass.polar_plot_link %}<a href="{{ pass.polar_plot_link }}"><img src="{{ pass.polar_plot_thumb }}" alt="Polar Plot"></a>{% else %}-{% endif %}</td>
+                <td>{% if pass.inverted_polar_plot_link %}<a href="{{ pass.inverted_polar_plot_link }}"><img src="{{ pass.inverted_polar_plot_thumb }}" alt="Inverted Polar Plot"></a>{% else %}-{% endif %}</td>
+                <td>{% if pass.heatmap_link %}<a href="{{ pass.heatmap_link }}">Heatmap</a>{% else %}-{% endif %}</td>
+                <td><a href="{{ pass.images_link }}">Images</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        function sortTable(n, type = 'str') {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("summaryTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (type === 'num') {
+                            if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.textContent.toLowerCase() > y.textContent.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    } else if (dir == "desc") {
+                        if (type === 'num') {
+                            if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.textContent.toLowerCase() < y.textContent.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
