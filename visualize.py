@@ -58,7 +58,7 @@ def main():
     
     
         # Add data from JSON files to the DataFrame
-        merged_log_df = add_json_data(merged_log_df,json_directory=LIVE_OUTPUT_DIRECTORY)
+        merged_log_df = add__dataset_json_data(merged_log_df,json_directory=LIVE_OUTPUT_DIRECTORY)
     
     
         # Extract decoder information from the folder names
@@ -76,10 +76,11 @@ def main():
         
         df = pd.read_excel('parsed_log_data.xlsx')
         satellites = load.tle_file(TLE_FILE_PATH)
-        
-        #skip APT
-        df = df[df["decoder"]!="APT"]
-    
+
+        #weird error when trying to remove apt decoders before adding azimuth, elevation and distance
+        #df = df[df["decoder"]!="apt"] #remove apt decoders
+
+         
         enriched_df = add_azimuth_elevation_distance(df, satellites,OBSERVER_LAT, OBSERVER_LON, OBSERVER_ELEVATION)
         enriched_df.to_excel('final_processed_log_data_enriched.xlsx', index=False)
     
@@ -94,6 +95,8 @@ def main():
     
         # Load the processed log data
         df = pd.read_excel('final_processed_log_data_enriched.xlsx')
+
+        df = df[df["decoder"]!="apt"] #remove apt decoders
         
         
         #remove broken rows with infinite values
