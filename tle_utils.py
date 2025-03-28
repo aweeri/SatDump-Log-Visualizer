@@ -12,9 +12,12 @@ from datetime import datetime
 # Define the URL for downloading TLE data
 TLE_URL = 'https://celestrak.org/NORAD/elements/weather.txt'  # Example URL, you might need to update this
 
+
+#overcomplicated, should be rewriten to one simple function
+
 # Define the path where TLE data will be saved
 TLE_FILE_PATH = 'weather.txt'
-def download_tle_if_necessary(update_days):
+def download_tle_if_necessary(update_days): #minimal value for TLE update to avoid unnecessary downloads
     """
     Downloads the TLE data if it doesn't already exist or if it's outdated.
     """

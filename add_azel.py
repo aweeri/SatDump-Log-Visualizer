@@ -3,34 +3,10 @@ import pandas as pd
 from skyfield.api import Loader, Topos, wgs84
 from datetime import datetime, timedelta
 import requests
+from tle_utils import *
 
 TLE_URL = 'https://celestrak.org/NORAD/elements/weather.txt'
 TLE_FILE_PATH = 'weather.txt'
-
-def download_tle_file(url, file_path):
-    response = requests.get(url)
-    response.raise_for_status()
-    with open(file_path, 'wb') as file:
-        file.write(response.content)
-
-
-def download_tle_file(url, file_path):
-    response = requests.get(url)
-    response.raise_for_status()
-    with open(file_path, 'wb') as file:
-        file.write(response.content)
-
-
-def is_file_older_than_days(file_path, days=300):
-    if not os.path.exists(file_path):
-        return True
-    file_mod_time = datetime.fromtimestamp(os.path.getmtime(file_path))
-    return datetime.now() - file_mod_time > timedelta(days=days)
-
-
-if is_file_older_than_days(TLE_FILE_PATH, days=3):
-    download_tle_file(TLE_URL, TLE_FILE_PATH)
-
 
 def calculate_azimuth_elevation(satellite, observer_lat, observer_lon, observer_elevation, timestamp):
     load = Loader('.')
@@ -52,7 +28,7 @@ def add_azimuth_elevation_distance(df, satellites,OBSERVER_LAT,OBSERVER_LON,OBSE
         try:
             timestamp = row['Timestamp']
             satellite_name = row['satellite']
-            # Zastąpienie ostatniego występującego "-" spacją
+            # replace last dash with space
             last_dash_index = satellite_name.rfind('-')
             if last_dash_index != -1:
                 satellite_name = satellite_name[:last_dash_index] + ' ' + satellite_name[last_dash_index + 1:]

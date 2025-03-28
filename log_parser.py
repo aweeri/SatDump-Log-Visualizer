@@ -5,8 +5,6 @@ import pandas as pd
 from datetime import datetime
 import glob
 
-# Constants for directories
-
 # Function to find all log files in a directory
 def find_log_files(directory='logs'):
     # Returns a list of paths to log files in the specified directory
@@ -40,6 +38,7 @@ def extract_values_from_progress_line(line, folder_name):
         values['Timestamp'] = convert_timestamp(timestamp_str)
     
     # Extract SNR, Peak SNR, Viterbi, BER, and Deframer values using regular expressions
+    # regular expressions black magic
     snr_match = re.search(r'SNR\s*:\s*(\d+\.\d+)dB', line)
     peak_snr_match = re.search(r'Peak\s*SNR\s*:\s*(\d+\.\d+)dB', line)
     viterbi_match = re.search(r'Viterbi\s*:\s*(\w+)', line)
@@ -120,7 +119,11 @@ def create_dataframe(log_entries):
     
 # Timestamp	             SNR	Peak_SNR	Viterbi	BER	        Deframer
 #2024-07-23 02:38:30			            SYNCED	0.081787	SYNCED
-#2024-07-23 02:38:40   8.158834	 8.659492			
+#2024-07-23 02:38:40   8.158834	 8.659492	
+# 
+# to	
+# # Timestamp	       SNR	    Peak_SNR	Viterbi	BER	        Deframer	
+#2024-07-23 02:38:40   8.158834	 8.659492	SYNCED	0.081787	SYNCED		
 
 def merge_rows(df):
     def merge_group(group):
@@ -142,7 +145,7 @@ def find_json_file(directory, folder_name):
     return files[0] if files else None
 
 # Function to read and extract data from a JSON file
-def read_json_file(file_path):
+def read_dataset_json_file(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
         satellite = data.get('satellite')
@@ -150,7 +153,7 @@ def read_json_file(file_path):
         return satellite, timestamp
 
 # Function to add JSON data (satellite name and pass timestamp) to the DataFrame
-def add_json_data(df, json_directory='images'):
+def add__dataset_json_data(df, json_directory='images'):
     df['satellite'] = 'Unknown'
     df['pass_timestamp'] = None
 
@@ -162,7 +165,7 @@ def add_json_data(df, json_directory='images'):
         #print(json_file)
         
         if json_file:
-            satellite, timestamp = read_json_file(json_file)
+            satellite, timestamp = read_dataset_json_file(json_file)
             df.at[index, 'satellite'] = satellite
             if timestamp==-1:
                 timestamp=0
