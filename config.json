@@ -1,11 +1,18 @@
 {
-  "LIVE_OUTPUT_DIRECTORY": "D:\\APTLRPT\\images",
-  "LOG_DIRECTORY": "D:\\APTLRPT\\logs",
-  "TLE_FILE_PATH": "weather.txt",
-  "OBSERVER_LAT": 50.866077,
-  "OBSERVER_LON": 20.628569,
-  "OBSERVER_ELEVATION": 300,
-  "PROCESS_TYPE": "both",
-  "UPDATE_DAYS": 3,
-  "_comment": "process_type: dump, visualize, both"
+    "description_1": "The path to your live_output directory where correctly named live decode folders are stored",
+    "DATASETS_DIRECTORY": "datasets",
+    "description_2": "The path to your log files. Win: 'C:/Users/[USER]/AppData/Roaming/satdump' on linux, '~/.config/satdump/'",
+    "LOG_DIRECTORY": "logs",
+    "description_3": "The path where visualizations will be stored. This will be created if it doesn't exist",
+    "OUTPUT_DIRECTORY": "visualizations",
+    "description_4": "The path to the TLE file. This will be created if it doesn't exist",
+    "TLE_FILE_PATH": "weather.txt",
+    "description_5": "The latitude of the observer in decimal degrees",
+    "OBSERVER_LAT": 0,
+    "description_6": "The longitude of the observer in decimal degrees",
+    "OBSERVER_LON": 0,
+    "description_7": "The elevation of the observer in meters",
+    "OBSERVER_ELEVATION": 0,
+    "description_8": "The number of days before the TLE file is considered old",
+    "UPDATE_DAYS": 1
 }
