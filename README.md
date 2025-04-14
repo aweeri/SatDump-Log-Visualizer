@@ -2,6 +2,9 @@
 
 A Python tool that processes and visualizes satellite pass logs from SatDump. It enriches satellite data with elevation, azimuth, and distance information, generates plots and maps, and produces interactive HTML reports for easy analysis of your LOS conditions
 
+![New Project(1)](https://github.com/user-attachments/assets/200d9f9d-bd51-4341-bcfb-84cc3948dc20)
+
+
 ## NOTICE
 
 For the tool to function correctly, you must provide a link to your unaltered `live_output` directory, as it contains the necessary `dataset.json` files. This path should be set as the `DATASETS_DIRECTORY` in your configuration and must point to `live_output` where your named directories with datasets in them are stored.
