@@ -1,6 +1,6 @@
 ## 🌍 Satdump Log Visualiser
 
-A Python tool that processes and visualizes satellite pass logs from SatDump. It enriches satellite data with elevation, azimuth, and distance information, generates plots and maps, and produces interactive HTML reports for easy analysis of your LOS conditions
+A Python tool that processes and visualizes satellite pass logs from SatDump. It enriches satellite data with elevation, azimuth, and distance information, generates plots and maps, and produces interactive HTML reports for easy analysis of your LOS conditions.
 
 ![New Project(1)](https://github.com/user-attachments/assets/200d9f9d-bd51-4341-bcfb-84cc3948dc20)
 
@@ -35,3 +35,7 @@ Update `OBSERVER_LAT`, `OBSERVER_LON`, (and optionally `OBSERVER_ELEVATION`) to 
 ## Running the tool
 
 Run `main.py` by simply clicking on it or open a terminal and run `pip install -r requirements.txt` within the tool directory.
+
+## Special thanks to:
+- [skco](https://github.com/skco/) for doing an amazing job at creating the original version of this tool.
+- Antonio "t0nito" Pereira, seler1500 and LEDFlighter for providing test data.
