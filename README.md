@@ -25,7 +25,8 @@ Run `install_requirements.py` by double clicking it or open a terminal and run `
 ## Configure your setup
 
 The config file is self-explanatory.
-Update `OBSERVER_LAT`, `OBSERVER_LON`, and `OBSERVER_ELEVATION` to your actual location for accurate plots.
+Update the `DATASETS_DIRECTORY`, and `LOG_DIRECTORY` paths.
+Update `OBSERVER_LAT`, `OBSERVER_LON`, (and optionally `OBSERVER_ELEVATION`) to your actual location for accurate plots.
 
 ## Running the tool
 
