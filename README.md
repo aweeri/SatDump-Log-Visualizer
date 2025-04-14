@@ -13,6 +13,7 @@ For the tool to function correctly, you must provide a link to your unaltered `l
 
 - meteor_m2-x_lrpt
 - meteor_m2-x_hrpt
+- noaa_dsb
 
 ## Clone the repository
 
