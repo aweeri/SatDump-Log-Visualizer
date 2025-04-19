@@ -17,7 +17,7 @@ For the tool to function correctly, you must provide a link to your unaltered `l
 
 ## Clone the repository
 
-git clone https://github.com/yourusername/satdump-log-visualiser.git
+git clone https://github.com/aweeri/satdump-log-visualiser.git
 cd satdump-log-visualiser
 
 ## Install dependencies
