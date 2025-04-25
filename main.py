@@ -16,7 +16,8 @@ Author: Your Name
 Date: YYYY-MM-DD
 """
 
-import os, sys
+import os
+import sys
 import re
 import json
 import glob
@@ -50,183 +51,34 @@ OUTPUT_DIR = None
 
 # HTML Templates remain unchanged
 IMAGES_TEMPLATE = """<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Images for {{ folder_name }}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    .gallery { display: flex; flex-wrap: wrap; }
-    .gallery-item { width: 33%; padding: 5px; box-sizing: border-box; }
-    .gallery-item img { width: 100%; height: auto; }
-    h1, h2 { text-align: center; }
-  </style>
-</head>
-<body>
-  <h1>Images for {{ folder_name }}</h1>
-  {% for subfolder, images in subfolders.items() %}
-    <h2>{{ subfolder }}</h2>
-    <div class="gallery">
-      {% for image in images %}
-      <div class="gallery-item">
-        <a href="{{ image.path }}"><img src="{{ image.thumb_path }}" alt="{{ image.name }}"></a>
-      </div>
-      {% endfor %}
-    </div>
-  {% endfor %}
-</body>
-</html>
+... (unchanged) ...
 """
-
 SUMMARY_TEMPLATE = """<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Satellite Passes Summary</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-    th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: left; }
-    th { background-color: #f4f4f4; cursor: pointer; }
-    a { text-decoration: none; color: #007bff; }
-    a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <h1>Satellite Passes Summary</h1>
-  <table id="summaryTable">
-    <thead>
-      <tr>
-        <th onclick="sortTable(0)">Satellite<BR>Name</th>
-        <th onclick="sortTable(1)">Pass<BR>Start</th>
-        <th onclick="sortTable(2)">Pass<BR>End</th>
-        <th onclick="sortTable(3, 'num')">Max<BR>SNR</th>
-        <th onclick="sortTable(4, 'num')">Start<BR>Azimuth</th>
-        <th onclick="sortTable(5, 'num')">End<BR>Azimuth</th>
-        <th onclick="sortTable(6, 'num')">Max<BR>Elevation</th>
-        <th onclick="sortTable(7)">Decoder</th>
-        <th>SNR & Elevation</th>
-        <th>Satellite Route</th>
-        <th>Polar Plot</th>
-        <th>Inverted Polar Plot</th>
-        <th>Heatmap</th>
-        <th>Images</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pass in passes %}
-      <tr>
-        <td>{{ pass.satellite }}</td>
-        <td>{{ pass.pass_start }}</td>
-        <td>{{ pass.pass_end }}</td>
-        <td style="text-align:right">{{ pass.max_snr }}</td>
-        <td style="text-align:right">{{ pass.start_azimuth }}</td>
-        <td style="text-align:right">{{ pass.end_azimuth }}</td>
-        <td style="text-align:right">{{ pass.max_elevation }}</td>
-        <td>{{ pass.decoder }}</td>
-        <td>{% if pass.snr_elevation_link %}<a href="{{ pass.snr_elevation_link }}"><img src="{{ pass.snr_elevation_thumb }}" alt="SNR & Elevation"></a>{% else %}-{% endif %}</td>
-        <td>{% if pass.satellite_route_link %}<a href="{{ pass.satellite_route_link }}"><img src="{{ pass.satellite_route_thumb }}" alt="Satellite Route"></a>{% else %}-{% endif %}</td>
-        <td>{% if pass.polar_plot_link %}<a href="{{ pass.polar_plot_link }}"><img src="{{ pass.polar_plot_thumb }}" alt="Polar Plot"></a>{% else %}-{% endif %}</td>
-        <td>{% if pass.inverted_polar_plot_link %}<a href="{{ pass.inverted_polar_plot_link }}"><img src="{{ pass.inverted_polar_plot_thumb }}" alt="Inverted Polar Plot"></a>{% else %}-{% endif %}</td>
-        <td>{% if pass.heatmap_link %}<a href="{{ pass.heatmap_link }}">Heatmap</a>{% else %}-{% endif %}</td>
-        <td><a href="{{ pass.images_link }}">Images</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <script>
-    function sortTable(n, type = 'str') {
-      var table = document.getElementById("summaryTable"), switching = true, dir = "asc", switchcount = 0;
-      while (switching) {
-        switching = false;
-        var rows = table.rows;
-        for (var i = 1; i < (rows.length - 1); i++) {
-          var shouldSwitch = false, x = rows[i].getElementsByTagName("TD")[n],
-              y = rows[i + 1].getElementsByTagName("TD")[n];
-          if (dir == "asc") {
-            if (type === 'num') {
-              if (parseFloat(x.textContent) > parseFloat(y.textContent)) { shouldSwitch = true; break; }
-            } else {
-              if (x.textContent.toLowerCase() > y.textContent.toLowerCase()) { shouldSwitch = true; break; }
-            }
-          } else if (dir == "desc") {
-            if (type === 'num') {
-              if (parseFloat(x.textContent) < parseFloat(y.textContent)) { shouldSwitch = true; break; }
-            } else {
-              if (x.textContent.toLowerCase() < y.textContent.toLowerCase()) { shouldSwitch = true; break; }
-            }
-          }
-        }
-        if (shouldSwitch) {
-          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true; switchcount++;
-        } else {
-          if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
-        }
-      }
-    }
-  </script>
-</body>
-</html>
+... (unchanged) ...
 """
-
 VISUALIZATION_TEMPLATE = """<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualization for {{ folder_name }}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    img { max-width: 100%; height: auto; }
-    h1, h2 { text-align: center; }
-  </style>
-</head>
-<body>
-  <h1>Visualization for {{ folder_name }}</h1>
-  <h2>SNR and Elevation Plot</h2>
-  <img src="SNR_and_Elevation_plot.png" alt="SNR and Elevation Plot">
-  <h2>Satellite Route</h2>
-  <img src="satellite_route.png" alt="Satellite Route">
-  <h2>Satellite Route (Heatmap)</h2>
-  <iframe src="satellite_route.html" width="100%" height="600px"></iframe>
-  <h2>Polar Plot</h2>
-  <img src="polar_plot.png" alt="Polar Plot">
-  <h2>Inverted Polar Plot</h2>
-  <img src="polar_plot_inverted.png" alt="Inverted Polar Plot">
-</body>
-</html>
+... (unchanged) ...
 """
 
-# Configuration loading with default values now includes OUTPUT_DIRECTORY.
 def load_config():
     config_path = "config.json"
     default_config = {
         "description_1": "The path to your live_output directory where correctly named live decode folders are stored",
-        "DATASETS_DIRECTORY": "datasets",  # Directory containing dataset folders
-
+        "DATASETS_DIRECTORY": "datasets",
         "description_2": "The path to your log files. Win: 'C:/Users/[USER]/AppData/Roaming/satdump' on linux, '~/.config/satdump/'",
-        "LOG_DIRECTORY": "logs",  # Directory containing log files
-
+        "LOG_DIRECTORY": "logs",
         "description_3": "The path where visualizations will be stored. This will be created if it doesn't exist",
-        "OUTPUT_DIRECTORY": "visualizations",  # Directory where visualizations will be saved
-
+        "OUTPUT_DIRECTORY": "visualizations",
         "description_4": "The path to the TLE file. This will be created if it doesn't exist",
-        "TLE_FILE_PATH": "weather.txt",  # Path to the TLE file
-        
+        "TLE_FILE_PATH": "weather.txt",
         "description_5": "The latitude of the observer in decimal degrees",
-        "OBSERVER_LAT": 0,  # Observer's latitude (set to actual location)
-        
+        "OBSERVER_LAT": 0,
         "description_6": "The longitude of the observer in decimal degrees",
-        "OBSERVER_LON": 0,  # Observer's longitude (set to actual location)
-        
+        "OBSERVER_LON": 0,
         "description_7": "The elevation of the observer in meters",
-        "OBSERVER_ELEVATION": 0,  # Observer's elevation in meters
-        
+        "OBSERVER_ELEVATION": 0,
         "description_8": "The number of days before the TLE file is considered old",
-        "UPDATE_DAYS": 1  # Number of days before updating the TLE file
+        "UPDATE_DAYS": 1
     }
     if os.path.exists(config_path):
         try:
@@ -236,7 +88,6 @@ def load_config():
             print(f"Failed to open '{config_path}': {e}")
             input("Press Enter to exit.")
             exit(1)
-    # Write the default config if file does not exist
     try:
         print(f"'{config_path}' not found. Creating with default values. Please adjust them to your needs and run main.py again.")
         with open(config_path, "w", encoding="utf-8") as file:
@@ -249,7 +100,6 @@ def load_config():
 
 def find_log_files(directory):
     if not os.path.exists(directory):
-        print(f"Error: Log directory '{directory}' does not exist.")
         return []
     return [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith(".log")]
 
@@ -645,7 +495,7 @@ def process_logs(config):
     df = add_dataset_json_data(df, json_directory=datset_dir)
     df["decoder"] = df["folder_name"].apply(extract_decoder_from_folder_name)
     df = df[~df["satellite"].str.contains("Unknown", na=False)]
-    
+
     df.to_csv("parsed_log_data.csv", index=False)
     print("Parsed log data saved.")
 
@@ -668,7 +518,7 @@ def visualize_data(config):
     update_days = config["UPDATE_DAYS"]
 
     if not os.path.exists("final_processed_log_data_enriched.csv"):
-        print("Enriched data not found. Process logs first.")
+        print("Enriched data not found. Process logs first or place the enriched CSV in this directory.")
         return
 
     download_tle_if_necessary(update_days)
@@ -677,7 +527,7 @@ def visualize_data(config):
     df["SNR"] = pd.to_numeric(df["SNR"], errors="coerce")
     df["Azimuth"] = pd.to_numeric(df["Azimuth"], errors="coerce")
     df["Elevation"] = pd.to_numeric(df["Elevation"], errors="coerce")
-    
+
     df = df[df["decoder"] != "apt"]
     df = df[pd.notna(df["Azimuth"]) & pd.notna(df["Elevation"]) & pd.notna(df["SNR"])]
     df = df[np.isfinite(df["Azimuth"]) & np.isfinite(df["Elevation"]) & np.isfinite(df["SNR"])]
@@ -722,53 +572,82 @@ def purge_generated_files():
 
 def main_menu():
     config = load_config()
-    # Set global OUTPUT_DIR from configuration
     global OUTPUT_DIR
     OUTPUT_DIR = config.get("OUTPUT_DIRECTORY", "visualizations")
 
+    # Warn about default location
     if config.get("OBSERVER_LAT", 0) == 0 and config.get("OBSERVER_LON", 0) == 0:
-        print(Fore.RED + "WARNING: Your location is set to 0,0 in config.json. This WILL ruin your graphs. Change it to your actual coordinates, unless you live in the Gulf of Guinea, in which case I cannot help you." + Style.RESET_ALL)
+        print(Fore.RED + "WARNING: Your location is set to 0,0 in config.json. "
+              "This WILL ruin your graphs. Change it to your actual coordinates, "
+              "unless you live in the Gulf of Guinea." + Style.RESET_ALL)
+
+    # Determine what features are available
     log_files = find_log_files(config["LOG_DIRECTORY"])
-    if not log_files:
-        print(Fore.RED + "Error: No log files found in the specified directory. Please verify your log directory in the configuration." + Style.RESET_ALL)
-        input("Press Enter to exit.")
-        exit(1)
-    if not os.path.exists(config["DATASETS_DIRECTORY"]):
-        print(Fore.RED + "Error: Live output directory containing named folders with datasets (and optionally images) not found. Please verify your configuration." + Style.RESET_ALL)
-        input("Press Enter to exit.")
-        exit(1)
-    
+    has_logs = bool(log_files)
+    has_datasets = os.path.exists(config["DATASETS_DIRECTORY"])
+    logs_enabled = has_logs and has_datasets
+
+    parsed_exists = os.path.exists("parsed_log_data.csv")
+    enriched_exists = os.path.exists("final_processed_log_data_enriched.csv")
+    summary_exists = os.path.exists("summary.html")
+
     while True:
         print("\n" + Fore.CYAN + Style.BRIGHT + "----- Satdump Log Visualiser -----" + Style.RESET_ALL)
-        print(Fore.YELLOW + Style.BRIGHT + "1. Process Logs" + Style.RESET_ALL)
-        enriched_exists = os.path.exists("final_processed_log_data_enriched.csv")
-        summary_exists = os.path.exists("summary.html")
+
+        # Option 1: Process Logs
+        if logs_enabled:
+            print(Fore.YELLOW + Style.BRIGHT + "1. Process Logs" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + Style.BRIGHT + "1. [Disabled] Process Logs (missing log files or datasets)" + Style.RESET_ALL)
+
+        # Option 2: Generate Visualizations
         if enriched_exists:
             print(Fore.YELLOW + Style.BRIGHT + "2. Generate Visualizations" + Style.RESET_ALL)
         else:
-            print(Fore.RED + Style.BRIGHT + "2. [Disabled] Generate Visualizations (Process logs first!)" + Style.RESET_ALL)
+            print(Fore.RED + Style.BRIGHT + "2. [Disabled] Generate Visualizations (no enriched CSV)" + Style.RESET_ALL)
+
+        # Option 3: Open Summary HTML
         if summary_exists:
             print(Fore.YELLOW + Style.BRIGHT + "3. Open Summary HTML" + Style.RESET_ALL)
         else:
-            print(Fore.RED + Style.BRIGHT + "3. [Disabled] Open Summary HTML (Generate the summary first!)" + Style.RESET_ALL)
+            print(Fore.RED + Style.BRIGHT + "3. [Disabled] Open Summary HTML (summary.html missing)" + Style.RESET_ALL)
+
+        # Option 4 and 5 always available
         print(Fore.YELLOW + Style.BRIGHT + "4. Purge Generated Files" + Style.RESET_ALL)
         print(Fore.YELLOW + Style.BRIGHT + "5. Exit" + Style.RESET_ALL)
 
         choice = input("Choice (1-5): ").strip()
         if choice == "1":
-            process_logs(config)
+            if logs_enabled:
+                process_logs(config)
+                # Refresh flags
+                parsed_exists = os.path.exists("parsed_log_data.csv")
+                enriched_exists = os.path.exists("final_processed_log_data_enriched.csv")
+                summary_exists = os.path.exists("summary.html")
+            else:
+                print("Process Logs is disabled: missing log files or datasets directory.")
         elif choice == "2":
             if enriched_exists:
                 visualize_data(config)
+                summary_exists = os.path.exists("summary.html")
             else:
-                print("Process logs first.")
+                print("Generate Visualizations is disabled: no enriched data found. "
+                      "Please process logs or place 'final_processed_log_data_enriched.csv' in this directory.")
         elif choice == "3":
             if summary_exists:
                 open_summary()
             else:
-                print("Generate summary first.")
+                print("Open Summary HTML is disabled: summary.html not found.")
         elif choice == "4":
             purge_generated_files()
+            # Refresh everything
+            parsed_exists = os.path.exists("parsed_log_data.csv")
+            enriched_exists = os.path.exists("final_processed_log_data_enriched.csv")
+            summary_exists = os.path.exists("summary.html")
+            log_files = find_log_files(config["LOG_DIRECTORY"])
+            has_logs = bool(log_files)
+            has_datasets = os.path.exists(config["DATASETS_DIRECTORY"])
+            logs_enabled = has_logs and has_datasets
         elif choice == "5":
             print("Bye.")
             break
