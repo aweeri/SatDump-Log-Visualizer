@@ -515,6 +515,95 @@ def plot_satellite_route(df, folder_name):
     except:
         print(f"Error generating Satellite Route plot for {folder_name}")
 
+def generate_combined_route(df):
+    # Make sure lon/lat/SNR are numeric
+    df = df[pd.notnull(df["lon"]) & pd.notnull(df["lat"]) & pd.notnull(df["SNR"])]
+    if df.empty:
+        print("No data for combined route.")
+        return
+
+    fig = plt.figure(figsize=(20, 12))
+    ax = plt.axes(projection=ccrs.PlateCarree())
+    ax.add_feature(cfeature.LAND)
+    ax.add_feature(cfeature.OCEAN)
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.BORDERS, linestyle=":")
+    ax.set_global()
+
+    sc = ax.scatter(
+        df["lon"],
+        df["lat"],
+        c=df["SNR"].astype(float),
+        cmap="jet",
+        s=10,
+        edgecolors="k",
+        alpha=0.7,
+        transform=ccrs.PlateCarree()
+    )
+    plt.colorbar(sc, label="SNR")
+    plt.title("Combined Satellite Route for All Passes")
+
+    out_path = os.path.join(OUTPUT_DIR, "combined_satellite_route.png")
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+    print(f"Combined satellite route saved to {out_path}")
+
+
+def generate_heatmap(df, folder_name):
+    # Prepare data for heatmap: [lat, lon, weight]
+    heat_data = []
+    for _, row in df.iterrows():
+        lat = row.get('lat')
+        lon = row.get('lon')
+        snr = row.get('SNR')
+        if pd.notnull(lat) and pd.notnull(lon) and pd.notnull(snr):
+            heat_data.append([lat, lon, float(snr)])
+    if not heat_data:
+        print(f"No data for heatmap for {folder_name}.")
+        return
+
+    # Center map on mean coords
+    center_lat = np.mean([pt[0] for pt in heat_data])
+    center_lon = np.mean([pt[1] for pt in heat_data])
+
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=2)
+    HeatMap(heat_data).add_to(m)
+
+    out_path = os.path.join(OUTPUT_DIR, folder_name, "satellite_route.html")
+    m.save(out_path)
+    print(f"Heatmap generated for {folder_name} at {out_path}")
+
+def generate_combined_heatmap(df):
+    # Prepare data for combined heatmap: [lat, lon, weight]
+    heat_data = []
+    for _, row in df.iterrows():
+        lat = row.get('lat')
+        lon = row.get('lon')
+        snr = row.get('SNR')
+        if pd.notnull(lat) and pd.notnull(lon) and pd.notnull(snr):
+            heat_data.append([lat, lon, float(snr)])
+    if not heat_data:
+        print("No data for combined heatmap.")
+        return
+
+    # Center on mean of all points
+    center_lat = np.mean([pt[0] for pt in heat_data])
+    center_lon = np.mean([pt[1] for pt in heat_data])
+
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=2)
+    HeatMap(
+        heat_data,
+        radius=18,       # smaller point radius
+        blur=15,         # less blur = tighter clustering
+        max_zoom=6,     # more detail when zoomed in
+        min_opacity=0.2 # keep faint points visible
+    ).add_to(m)
+
+    out_path = os.path.join(OUTPUT_DIR, "combined_heatmap.html")
+    m.save(out_path)
+    print(f"Combined heatmap generated at {out_path}")
+
+
 def plot_polar(df, folder_name, pass_timestamp, snr_min, snr_max):
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111, polar=True)
@@ -676,8 +765,11 @@ def visualize_data(config):
     for folder_name, group in df.groupby("folder_name"):
         print(f"Generating visualizations for {folder_name}")
         os.makedirs(os.path.join(OUTPUT_DIR, folder_name), exist_ok=True)
+        generate_combined_heatmap(df)
+        generate_combined_route(df)
         plot_snr_and_elevation(group, folder_name)
         plot_satellite_route(group, folder_name)
+        generate_heatmap(group, folder_name)
         generate_visualization_html(folder_name)
         generate_images_html(folder_name)
         snr_min = group["SNR"].min()
